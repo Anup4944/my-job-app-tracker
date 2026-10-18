@@ -1,4 +1,4 @@
-"user server";
+"use server";
 
 import { revalidatePath } from "next/cache";
 import { getSession } from "../auth/auth";
@@ -63,4 +63,33 @@ export async function createJobApplication(data: JobApplicationData) {
   if (!column) {
     return { error: "Column not found" };
   }
+
+  const maxOrder = (await JobApplication.findOne({ columnId })
+    .sort({ order: -1 })
+    .select("order")
+    .lean()) as { order: number } | null;
+
+  const jobApplication = await JobApplication.create({
+    company,
+    position,
+    location,
+    notes,
+    salary,
+    jobUrl,
+    columnId,
+    boardId,
+    userId: session.user.id,
+    tags: tags || [],
+    description,
+    status: "applied",
+    order: maxOrder ? maxOrder.order + 1 : 0,
+  });
+
+  await Column.findByIdAndUpdate(columnId, {
+    $push: { jobApplications: jobApplication._id },
+  });
+
+  revalidatePath("/dashboard");
+
+  return { data: JSON.parse(JSON.stringify(jobApplication)) };
 }
