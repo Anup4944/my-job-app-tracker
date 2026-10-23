@@ -1,6 +1,6 @@
 "use client";
 
-import { Board, Column } from "@/lib/models/models.types";
+import { Board, Column, JobApplication } from "@/lib/models/models.types";
 import {
   Calendar,
   CheckCircle2,
@@ -19,6 +19,8 @@ import {
 } from "./ui/dropdown-menu";
 import { Button } from "./ui/button";
 import CreateJobAppDialog from "./CreateJobAppDialog";
+import JobApplicationCard from "./JobApplicationCard";
+import { useBoard } from "@/lib/hooks/useBoard";
 
 interface KanbanBoardProps {
   board: Board;
@@ -56,11 +58,17 @@ function DroppableColumn({
   column,
   config,
   boardId,
+  sortedColumns,
 }: {
   column: Column;
   config: ColConfig;
   boardId: string;
+  sortedColumns: Column[];
 }) {
+  const sortedJobs =
+    column.jobApplications?.sort((a, b) => a.order - b.order) || [];
+
+  //   console.log("droppable column", sortedJobs);
   return (
     <Card className="min-w-[300px] flex-shrink-0 shadow-md p-0">
       <CardHeader
@@ -96,14 +104,37 @@ function DroppableColumn({
         </div>
       </CardHeader>
       <CardContent className="space-y-2 pt-4 bg-gray-50/50 min-h-[400px] rounded-b-lg">
+        {sortedJobs.map((job, key) => (
+          <SortableJobCard
+            key={key}
+            job={{ ...job, columnId: job.columnId || column._id }}
+            columns={sortedColumns}
+          />
+        ))}
         <CreateJobAppDialog columnId={column._id} boardId={boardId} />
       </CardContent>
     </Card>
   );
 }
 
+function SortableJobCard({
+  job,
+  columns,
+}: {
+  job: JobApplication;
+  columns?: Column[];
+}) {
+  return (
+    <div>
+      <JobApplicationCard job={job} columns={columns} />{" "}
+    </div>
+  );
+}
+
 export default function KanbanBoard({ board, userId }: KanbanBoardProps) {
-  const columns = board.columns;
+  const { columns } = useBoard(board);
+
+  const sortedColumns = columns?.sort((a, b) => a.order - b.order);
   return (
     <div>
       <div>
@@ -119,6 +150,7 @@ export default function KanbanBoard({ board, userId }: KanbanBoardProps) {
                 column={col}
                 config={config}
                 boardId={board._id}
+                sortedColumns={sortedColumns}
               />
             );
           })}
