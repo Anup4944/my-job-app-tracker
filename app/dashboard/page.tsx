@@ -19,8 +19,7 @@ async function getBoard(userId: string) {
 
   if(!boardDoc) return null
 
-  const board = boardDoc ? boardDoc.toObject() : null;
-  return board;
+return JSON.parse(JSON.stringify(boardDoc));  
 }
 
 async function DashboardPage() {
