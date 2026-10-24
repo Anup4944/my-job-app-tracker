@@ -18,8 +18,8 @@ import { useState } from "react";
 import { createJobApplication } from "@/lib/actions/job-application";
 
 interface CreateJobAppDialogProps {
-  columnId?: string;
-  boardId?: string;
+  columnId: string;
+  boardId: string;
 }
 const INITIAL_FORM_DATA = {
   company: "",

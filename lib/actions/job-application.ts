@@ -17,6 +17,7 @@ interface JobApplicationData {
   boardId: string;
   tags?: string[];
   description?: string;
+  order?: number;
 }
 
 export async function createJobApplication(data: JobApplicationData) {
@@ -98,18 +99,7 @@ export async function createJobApplication(data: JobApplicationData) {
 // moving job application from one column to another
 export async function updateJobApplication(
   id: string,
-  updates: {
-    company: string;
-    position: string;
-    location?: string;
-    notes?: string;
-    salary?: string;
-    jobUrl?: string;
-    columnId: string;
-    boardId: string;
-    tags?: string[];
-    description?: string;
-  },
+  updates: Partial<JobApplicationData> & { order?: number },
 ) {
   const session = await getSession();
 

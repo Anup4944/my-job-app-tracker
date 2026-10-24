@@ -148,13 +148,13 @@ export default function JobApplicationCard({
                     <Edit2 className="mr-2 h-4 w-4" />
                     Edit
                   </DropdownMenuItem>
-                  {columns?.length > 1 && (
+                  {(columns?.length ?? 0) > 1 && (
                     <>
                       {columns
-                        .filter((c) => c._id !== job.columnId)
-                        .map((column, key) => (
+                        ?.filter((c) => c._id !== job.columnId)
+                        .map((column) => (
                           <DropdownMenuItem
-                            key={key}
+                            key={column._id}
                             onClick={() => handleMove(column._id)}
                           >
                             Move to {column.name}

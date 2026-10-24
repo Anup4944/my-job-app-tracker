@@ -2,20 +2,18 @@
 
 import { updateJobApplication } from "../actions/job-application";
 import { Board, Column, JobApplication } from "../models/models.types";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 export function useBoard(initialBoard?: Board | null) {
-  const [board, setBoard] = useState<Board | null>(initialBoard || null);
-  const [columns, setColumns] = useState<Column[]>(initialBoard?.columns || []);
+  const board = initialBoard ?? null;
+  const [columns, setColumns] = useState<Column[]>(initialBoard?.columns ?? []);
+  const [prevBoard, setPrevBoard] = useState(initialBoard);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (initialBoard) {
-      setBoard(initialBoard);
-      setColumns(initialBoard.columns || []);
-    }
-  }, [initialBoard]);
-
+  if (initialBoard !== prevBoard) {
+    setPrevBoard(initialBoard);
+    setColumns(initialBoard?.columns ?? []);
+  }
   async function moveJob(
     jobApplicationId: string,
     newColumnId: string,

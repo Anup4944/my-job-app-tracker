@@ -17,9 +17,9 @@ async function getBoard(userId: string) {
     populate: { path: "jobApplications" },
   });
 
-  if(!boardDoc) return null
+  if (!boardDoc) return null;
 
-return JSON.parse(JSON.stringify(boardDoc));  
+  return JSON.parse(JSON.stringify(boardDoc));
 }
 
 async function DashboardPage() {
@@ -44,7 +44,13 @@ async function DashboardPage() {
 
 export default async function Dashboard() {
   return (
-    <Suspense fallback={<p>Loading....</p>}>
+    <Suspense
+      fallback={
+        <p className="flex items-center justify-center h-full w-full">
+          Loading...
+        </p>
+      }
+    >
       <DashboardPage />
     </Suspense>
   );
